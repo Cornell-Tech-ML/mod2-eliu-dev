@@ -319,6 +319,18 @@ class Log(Function):
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tensor:
+        """The backward pass for the log function
+
+        Args:
+        ----
+            ctx: Context to store information during the forward pass
+            grad_output: Gradient to log
+
+        Returns:
+        -------
+            Logged gradient
+
+        """
         (t1,) = ctx.saved_values
         return grad_output.f.log_back_zip(t1, grad_output)
 
@@ -451,6 +463,18 @@ class EQ(Function):
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
+        """Zero the gradient from the EQ comparison
+
+        Args:
+        ----
+            ctx: Context to store information during the forward pass
+            grad_output: Gradient to zero
+
+        Returns:
+        -------
+            Zeroed gradient
+
+        """
         return grad_output.zeros(), grad_output.zeros()
 
 
@@ -702,6 +726,21 @@ def tensor(
 def grad_central_difference(
     f: Any, *vals: Tensor, arg: int = 0, epsilon: float = 1e-6, ind: UserIndex
 ) -> float:
+    """Compute the central difference of the gradient
+
+    Args:
+    ----
+        f: Function to compute the gradient
+        vals: Values to compute the gradient
+        arg: Argument to compute the gradient
+        epsilon: Epsilon value
+        ind: Index to compute the gradient
+
+    Returns:
+    -------
+        Central difference of the gradient as a float
+
+    """
     x = vals[arg]
     up = zeros(x.shape)
     up[ind] = epsilon

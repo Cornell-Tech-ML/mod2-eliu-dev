@@ -8,8 +8,7 @@ from typing_extensions import Protocol
 
 
 def central_difference(f: Any, *vals: Any, arg: int = 0, epsilon: float = 1e-6) -> Any:
-    r"""
-    Computes an approximation to the derivative of `f` with respect to one arg.
+    r"""Computes an approximation to the derivative of `f` with respect to one arg.
 
     See :doc:`derivative` or https://en.wikipedia.org/wiki/Finite_difference for more details.
 
@@ -35,36 +34,45 @@ variable_count = 1
 
 
 class Variable(Protocol):
+    """A variable in the computation graph"""
+
     def accumulate_derivative(self, x: Any) -> None:
         pass
 
     @property
     def unique_id(self) -> int:
+        """The unique ID of the variable"""
         pass
 
     def is_leaf(self) -> bool:
+        """Whether the variable is a leaf"""
         pass
 
     def is_constant(self) -> bool:
+        """Whether the variable is a constant"""
         pass
 
     @property
     def parents(self) -> Iterable["Variable"]:
+        """The parents of the variable"""
         pass
 
     def chain_rule(self, d_output: Any) -> Iterable[Tuple["Variable", Any]]:
+        """The chain rule for the variable"""
         pass
 
 
 def topological_sort(variable: Variable) -> Iterable[Variable]:
-    """
-    Computes the topological order of the computation graph.
+    """Computes the topological order of the computation graph.
 
     Args:
+    ----
         variable: The right-most variable
 
     Returns:
+    -------
         Non-constant Variables in topological order starting from the right.
+
     """
     order: List[Variable] = []
     seen = set()
@@ -84,15 +92,16 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
 
 
 def backpropagate(variable: Variable, deriv: Any) -> None:
-    """
-    Runs backpropagation on the computation graph in order to
+    """Runs backpropagation on the computation graph in order to
     compute derivatives for the leave vars.
 
     Args:
+    ----
         variable: The right-most variable
-        deriv  : Its derivative that we want to propagate backward to the leaves.
+        deriv  : Its derivative that we want to propagate backward to the leaves
 
     No return. Should write to its results to the derivative values of each leaf through `accumulate_derivative`.
+
     """
     queue = topological_sort(variable)
     derivatives = {variable.unique_id: deriv}
@@ -111,19 +120,18 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
 
 @dataclass
 class Context:
-    """
-    Context class is used by `Function` to store information during the forward pass.
-    """
+    """Context class is used by `Function` to store information during the forward pass."""
 
     no_grad: bool = False
     saved_values: Tuple[Any, ...] = ()
 
     def save_for_backward(self, *values: Any) -> None:
-        "Store the given `values` if they need to be used during backpropagation."
+        """Store the given `values` if they need to be used during backpropagation."""
         if self.no_grad:
             return
         self.saved_values = values
 
     @property
     def saved_tensors(self) -> Tuple[Any, ...]:
+        """The saved values"""
         return self.saved_values

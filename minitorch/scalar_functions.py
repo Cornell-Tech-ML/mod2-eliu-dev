@@ -14,14 +14,34 @@ if TYPE_CHECKING:
 
 
 def wrap_tuple(x):  # type: ignore
-    """Turn a possible value into a tuple"""
+    """Turn a possible value into a tuple
+
+    Args:
+    ----
+        x: Value to wrap
+
+    Returns:
+    -------
+        Tuple
+
+    """
     if isinstance(x, tuple):
         return x
     return (x,)
 
 
 def unwrap_tuple(x):  # type: ignore
-    """Turn a singleton tuple into a value"""
+    """Turn a singleton tuple into a value
+
+    Args:
+    ----
+        x: Tuple to unwrap
+
+    Returns:
+    -------
+        Value
+
+    """
     if len(x) == 1:
         return x[0]
     return x
@@ -322,6 +342,7 @@ class ReLU(ScalarFunction):
 
         Args:
         ----
+            ctx: Context to store information during the forward pass
             a: float
 
         Returns:
@@ -338,6 +359,7 @@ class ReLU(ScalarFunction):
 
         Args:
         ----
+            ctx: Context to store information during the forward pass
             d_output: float
 
         Returns:
@@ -358,6 +380,7 @@ class Exp(ScalarFunction):
 
         Args:
         ----
+            ctx: Context to store information during the forward pass
             a: float
 
         Returns:
@@ -375,6 +398,7 @@ class Exp(ScalarFunction):
 
         Args:
         ----
+            ctx: Context to store information during the forward pass
             d_output: float
 
         Returns:
@@ -395,6 +419,7 @@ class LT(ScalarFunction):
 
         Args:
         ----
+            ctx: Context to store information during the forward pass
             a: float
             b: float
 
@@ -411,6 +436,7 @@ class LT(ScalarFunction):
 
         Args:
         ----
+            ctx: Context to store information during the forward pass
             d_output: float
 
         Returns:
@@ -430,6 +456,7 @@ class EQ(ScalarFunction):
 
         Args:
         ----
+            ctx: Context to store information during the forward pass
             a: float
             b: float
 
@@ -446,6 +473,7 @@ class EQ(ScalarFunction):
 
         Args:
         ----
+            ctx: Context to store information during the forward pass
             d_output: float
 
         Returns:
