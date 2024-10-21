@@ -319,7 +319,7 @@ def reduce(
     Args:
     ----
         fn: A Callable function that takes an iterable of floats and returns a float. Used to reduce the list to a single value.
-        ls: An iterable of floats.
+        start: The starting value for the reduction.
 
     Returns:
     -------
