@@ -19,7 +19,9 @@ def central_difference(f: Any, *vals: Any, arg: int = 0, epsilon: float = 1e-6) 
         epsilon : a small constant
 
     Returns:
+    -------
         An approximation of $f'_i(x_0, \ldots, x_{n-1})$
+
     """
     vals1 = [v for v in vals]
     vals2 = [v for v in vals]
@@ -37,6 +39,7 @@ class Variable(Protocol):
     """A variable in the computation graph"""
 
     def accumulate_derivative(self, x: Any) -> None:
+        """Accumulate the derivative of the variable"""
         pass
 
     @property
@@ -100,6 +103,8 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
         variable: The right-most variable
         deriv  : Its derivative that we want to propagate backward to the leaves
 
+    Returns:
+    -------
     No return. Should write to its results to the derivative values of each leaf through `accumulate_derivative`.
 
     """
