@@ -13,6 +13,7 @@ def central_difference(f: Any, *vals: Any, arg: int = 0, epsilon: float = 1e-6) 
     See :doc:`derivative` or https://en.wikipedia.org/wiki/Finite_difference for more details.
 
     Args:
+    ----
         f : arbitrary function from n-scalar args to one value
         *vals : n-float values $x_0 \ldots x_{n-1}$
         arg : the number $i$ of the arg to compute the derivative

@@ -32,9 +32,9 @@ class Network(minitorch.Module):
         -------
             Tensor of forward pass shape
         """
-        middle = self.layer1.forward(x).relu_map()
-        end = self.layer2.forward(middle).relu_map()
-        return self.layer3.forward(end).sigmoid_map()
+        middle = self.layer1.forward(x).relu()
+        end = self.layer2.forward(middle).relu()
+        return self.layer3.forward(end).sigmoid()
 
 
 class Linear(minitorch.Module):
@@ -55,43 +55,27 @@ class Linear(minitorch.Module):
         Returns:
         -------
             Tensor output
-        """
+        """        
 
-        # def transpose(a: Tensor) -> Tensor:
-        #     order = list(range(a.dims))
-        #     order[-2], order[-1] = order[-1], order[-2]
-        #     return a._new(a._tensor.permute(*order))
+        # x - (batch, features, 1)
+        # * weights - (features, hidden)
+        #-------------
+        # (batch, features, hidden)
+        # reduce(features)
+        #-------------
+        # batch, 1, hidden
+        # + bias(hidden)
+        #-------------
+        # batch, 1, hidden
+        # view()
+        # batch, hidden
+        broadcast_input = inputs.view(*inputs.shape, 1)
+        out = self.weights.value.backend.mul_zip(broadcast_input, self.weights.value)
+        out = self.weights.value.backend.add_reduce(out, 1)
+        out = out.view(out.shape[0], out.shape[2])
 
-        # def conform_shape(data, weights):
-        #     data_index = len(data) - 1
-        #     weights_index = len(weights) - 1
-        #     shape = []
-        #     while data_index >= 0 and weights_index >= 0:
-        #         if data[data_index] == weights[weights_index]:
-        #             shape.append(data[data_index])
-        #         elif data[data_index] == 1:
-        #             shape.append(weights[weights_index])
-        #         elif weights[weights_index] == 1:
-        #             shape.append(data[data_index])
-        #         else:
-        #             shape.append(1)
-        #         data_index -= 1
-        #         weights_index -= 1
-
-        #     return tuple(shape)
-
-        print(f'input: {inputs.shape} weights: {self.weights.value.shape} bias: {self.bias.value.shape}')
-        print(f'---weights: {self.weights.value}')
-        print(f'---bias: {self.bias.value}')
-        print(f'---inputs: {inputs}')
-
-        broadcast_input_shape = minitorch.shape_broadcast(inputs.shape, self.weights.value.shape)
-        print(f'------input_broadcast: {broadcast_input_shape} {inputs.view(*broadcast_input_shape)}')
-        out = self.weights.value.backend.mul_zip(self.weights.value, inputs.view(*broadcast_input_shape))
-
-        broadcast_output_shape = minitorch.shape_broadcast(inputs.shape, self.weights.value.shape)
-        out = out.backend.add_zip(out, self.bias.value.view(*broadcast_output_shape))
-        return input
+        out = out + self.bias.value
+        return out
 
 def default_log_fn(epoch, total_loss, correct, losses):
     print("Epoch ", epoch, " loss ", total_loss, "correct", correct)

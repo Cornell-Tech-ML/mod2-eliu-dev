@@ -28,7 +28,8 @@ class ScalarHistory:
     """`ScalarHistory` stores the history of `Function` operations that was
     used to construct the current Variable.
 
-    Attributes:
+    Attributes
+    ----------
         last_fn : The last Function that was called.
         ctx : The context for that Function.
         inputs : The inputs that were given when `last_fn.forward` was called.
@@ -322,6 +323,7 @@ class Scalar:
         Should only be called during autodifferentiation on leaf variables.
 
         Args:
+        ----
             x: value to be accumulated
 
         """
