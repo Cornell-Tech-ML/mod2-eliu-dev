@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Iterable, Optional, Sequence, Tuple, Type, Union
 
 import numpy as np
@@ -47,6 +47,7 @@ class ScalarHistory:
 _var_count = 0
 
 
+@dataclass
 class Scalar:
     """A reimplementation of scalar values for autodifferentiation
     tracking. Scalar Variables behave as close as possible to standard
@@ -55,28 +56,18 @@ class Scalar:
     `ScalarFunction`.
     """
 
-    history: Optional[ScalarHistory]
-    derivative: Optional[float]
     data: float
-    unique_id: int
-    name: str
+    history: Optional[ScalarHistory] = field(default_factory=ScalarHistory)
+    derivative: Optional[float] = None
+    name: str = field(default="")
+    unique_id: int = field(init=False, default=0)
 
-    def __init__(
-        self,
-        v: float,
-        back: ScalarHistory = ScalarHistory(),
-        name: Optional[str] = None,
-    ):
+    def __post_init__(self):
         global _var_count
         _var_count += 1
-        self.unique_id = _var_count
-        self.data = float(v)
-        self.history = back
-        self.derivative = None
-        if name is not None:
-            self.name = name
-        else:
-            self.name = str(self.unique_id)
+        object.__setattr__(self, "unique_id", _var_count)
+        object.__setattr__(self, "name", str(self.unique_id))
+        object.__setattr__(self, "data", float(self.data))
 
     def __repr__(self) -> str:
         """Representation function
@@ -216,7 +207,7 @@ class Scalar:
             Subtraction of self and b as a Scalar
 
         """
-        return Add.apply(self, Neg.apply(b))
+        return Add.apply(self, -b)
 
     def __neg__(self) -> Scalar:
         """Negation function
@@ -244,7 +235,7 @@ class Scalar:
             Addition of self and b as a Scalar
 
         """
-        return Add.apply(b, self)
+        return self + b
 
     def __rmul__(self, b: ScalarLike) -> Scalar:
         """Right multiplication function

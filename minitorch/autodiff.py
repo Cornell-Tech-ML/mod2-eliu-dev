@@ -1,7 +1,7 @@
-from dataclasses import dataclass
-from typing import Any, Iterable, Tuple, List
+from __future__ import annotations
 
-from typing_extensions import Protocol
+from dataclasses import dataclass
+from typing import Any, Iterable, Tuple, List, Protocol
 
 # ## Task 1.1
 # Central Difference calculation
@@ -110,7 +110,8 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
 
     """
     queue = topological_sort(variable)
-    derivatives = {variable.unique_id: deriv}
+    derivatives = {}
+    derivatives[variable.unique_id] = deriv
 
     for var in queue:
         deriv = derivatives[var.unique_id]
