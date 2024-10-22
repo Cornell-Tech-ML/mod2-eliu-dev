@@ -46,24 +46,24 @@ class Variable(Protocol):
     @property
     def unique_id(self) -> int:
         """The unique ID of the variable"""
-        pass
+        ...
 
     def is_leaf(self) -> bool:
         """Whether the variable is a leaf"""
-        pass
+        ...
 
     def is_constant(self) -> bool:
         """Whether the variable is a constant"""
-        pass
+        ...
 
     @property
     def parents(self) -> Iterable["Variable"]:
         """The parents of the variable"""
-        pass
+        ...
 
     def chain_rule(self, d_output: Any) -> Iterable[Tuple["Variable", Any]]:
         """The chain rule for the variable"""
-        pass
+        ...
 
 
 def topological_sort(variable: Variable) -> Iterable[Variable]:

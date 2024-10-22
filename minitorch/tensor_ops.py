@@ -29,21 +29,21 @@ class TensorOps:
     @staticmethod
     def map(fn: Callable[[float], float]) -> MapProto:
         """Map placeholder"""
-        pass
+        ...
 
     @staticmethod
     def zip(
         fn: Callable[[float, float], float],
     ) -> Callable[[Tensor, Tensor], Tensor]:
         """Zip placeholder"""
-        pass
+        ...
 
     @staticmethod
     def reduce(
         fn: Callable[[float, float], float], start: float = 0.0
     ) -> Callable[[Tensor, int], Tensor]:
         """Reduce placeholder"""
-        pass
+        ...
 
     @staticmethod
     def matrix_multiply(a: Tensor, b: Tensor) -> Tensor:
