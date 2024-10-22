@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from .scalar import Scalar, ScalarLike
 
 
-def wrap_tuple(x):  # type: ignore
+def wrap_tuple(x: float | Tuple[float, ...]) -> Tuple[float, ...]:
     """Turn a possible value into a tuple
 
     Args:
@@ -28,23 +28,6 @@ def wrap_tuple(x):  # type: ignore
     if isinstance(x, tuple):
         return x
     return (x,)
-
-
-def unwrap_tuple(x):  # type: ignore
-    """Turn a singleton tuple into a value
-
-    Args:
-    ----
-        x: Tuple to unwrap
-
-    Returns:
-    -------
-        Value
-
-    """
-    if len(x) == 1:
-        return x[0]
-    return x
 
 
 class ScalarFunction:

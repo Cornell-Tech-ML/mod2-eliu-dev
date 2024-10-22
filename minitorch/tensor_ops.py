@@ -12,6 +12,8 @@ from .tensor_data import (
     to_index,
 )
 
+import numpy as np
+
 if TYPE_CHECKING:
     from .tensor import Tensor
     from .tensor_data import Shape, Storage, Strides
@@ -272,13 +274,13 @@ def tensor_map(
     ) -> None:
         # TODO: Implement for Task 2.3.
         out_size = 1
-        in_index = [0] * len(in_shape)
+        in_index = np.zeros(len(in_shape), dtype=np.int32)
         for i in out_shape:
             out_size *= i
 
         # for each position in the larger output array,
         # compute the corresponding position in the input shape
-        out_index = [0] * len(out_shape)
+        out_index = np.zeros(len(out_shape), dtype=np.int32)
         for i in range(out_size):
             to_index(i, out_shape, out_index)
             broadcast_index(out_index, out_shape, in_shape, in_index)
@@ -343,13 +345,23 @@ def tensor_zip(
         out_size = 1
         for i in broadcast_shape:
             out_size *= i
-        a_index = [0] * len(a_shape)
-        b_index = [0] * len(b_shape)
-        out_index = [0] * len(out_shape)
+        a_index = np.zeros(len(a_shape), dtype=np.int32)
+        b_index = np.zeros(len(b_shape), dtype=np.int32)
+        out_index = np.zeros(len(out_shape), dtype=np.int32)
         for i in range(out_size):
-            to_index(i, broadcast_shape, out_index)
-            broadcast_index(out_index, broadcast_shape, a_shape, a_index)
-            broadcast_index(out_index, broadcast_shape, b_shape, b_index)
+            to_index(i, np.array(out_shape, dtype=np.int32), out_index)
+            broadcast_index(
+                out_index,
+                np.array(broadcast_shape, dtype=np.int32),
+                np.array(a_shape, dtype=np.int32),
+                a_index,
+            )
+            broadcast_index(
+                out_index,
+                np.array(broadcast_shape, dtype=np.int32),
+                np.array(b_shape, dtype=np.int32),
+                b_index,
+            )
             a_position = index_to_position(a_index, a_strides)
             b_position = index_to_position(b_index, b_strides)
             out_position = index_to_position(out_index, out_strides)
@@ -392,19 +404,23 @@ def tensor_reduce(
         # Iterate over all elements in the output tensor
         for i in range(out_size):
             # Convert flat index to multidimensional index
-            out_index = [0] * len(out_shape)
+            out_index = np.zeros(len(out_shape), dtype=np.int32)
             to_index(i, out_shape, out_index)
 
             # Initialize the accumulator with the first element
             a_index = list(out_index)
             a_index[reduce_dim] = 0
-            initial_position = index_to_position(a_index, a_strides)
+            initial_position = index_to_position(
+                np.array(a_index, dtype=np.int32), a_strides
+            )
             accumulator = a_storage[initial_position]
 
             # Reduce along the specified dimension
             for j in range(1, reduce_size):
                 a_index[reduce_dim] = j
-                current_position = index_to_position(a_index, a_strides)
+                current_position = index_to_position(
+                    np.array(a_index, dtype=np.int32), a_strides
+                )
                 accumulator = fn(accumulator, a_storage[current_position])
 
             out_position = index_to_position(out_index, out_strides)

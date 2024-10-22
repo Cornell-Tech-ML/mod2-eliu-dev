@@ -252,11 +252,9 @@ class Sigmoid(Function):
 
         """
         (sig,) = ctx.saved_values
-        print(f"sig.shape {sig.shape}", flush=True)
         ones = minitorch.Tensor.make(
             [1.0] * int(operators.prod(sig.shape)), sig.shape, backend=sig.backend
         )
-        print(f"ones {ones}", flush=True)
         grad_sig = SimpleBackend.mul_zip(
             sig, SimpleBackend.add_zip(ones, grad_output.f.neg_map(sig))
         )
@@ -544,7 +542,7 @@ class Permute(Function):
             return reverse_permute
 
         reverse_order = tuple(reverse_permute(order_list))
-        print(f"order {order_list} -- reverse_order {reverse_order}", flush=True)
+        # print(f"order {order_list} -- reverse_order {reverse_order}", flush=True)
         return grad_output._new(grad_output._tensor.permute(*reverse_order)), 0.0
 
 

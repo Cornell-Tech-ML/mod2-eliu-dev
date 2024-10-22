@@ -19,7 +19,7 @@ class Network(minitorch.Module):
         self.layer1 = Linear(2, hidden_layers)
         self.layer2 = Linear(hidden_layers, hidden_layers)
         self.layer3 = Linear(hidden_layers, 1)
-
+ 
     def forward(self, x) -> minitorch.Scalar:
         """
         Forward pass for the network
@@ -34,7 +34,9 @@ class Network(minitorch.Module):
         """
         middle = self.layer1.forward(x).relu()
         end = self.layer2.forward(middle).relu()
-        return self.layer3.forward(end).sigmoid()
+        out = self.layer3.forward(end).sigmoid()
+
+        return out
 
 
 class Linear(minitorch.Module):
@@ -55,7 +57,7 @@ class Linear(minitorch.Module):
         Returns:
         -------
             Tensor output
-        """        
+        """
 
         # x - (batch, features, 1)
         # * weights - (features, hidden)

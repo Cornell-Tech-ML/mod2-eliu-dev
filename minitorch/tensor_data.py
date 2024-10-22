@@ -67,7 +67,7 @@ def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
 
     """
     # TODO: Implement for Task 2.1.
-    strides: Strides = array(strides_from_shape(shape))
+    strides = strides_from_shape(tuple(shape))
     for i in range(len(strides)):
         out_index[i] = ordinal // strides[i]
         ordinal = ordinal % strides[i]
@@ -126,8 +126,8 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
     """
     # TODO: Implement for Task 2.2.
     max_len = max(len(shape1), len(shape2))
-    shape1 = (1,) * (max_len - len(shape1)) + shape1
-    shape2 = (1,) * (max_len - len(shape2)) + shape2
+    shape1 = (1,) * (max_len - len(shape1)) + tuple(shape1)
+    shape2 = (1,) * (max_len - len(shape2)) + tuple(shape2)
 
     result = []
     for s1, s2 in zip(reversed(shape1), reversed(shape2)):
