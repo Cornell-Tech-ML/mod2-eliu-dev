@@ -564,7 +564,7 @@ class View(Function):
         """
         ctx.save_for_backward(a.shape)
         assert a._tensor.is_contiguous(), "Must be contiguous to view"
-        shape2 = [int(shape[i]) for i in range(shape._tensor.size)]
+        shape2 = [int(shape[i]) for i in range(shape.size)]
         return minitorch.Tensor.make(
             a._tensor._storage, tuple(shape2), backend=a.backend
         )

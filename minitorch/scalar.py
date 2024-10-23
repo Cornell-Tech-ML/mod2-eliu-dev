@@ -320,8 +320,8 @@ class Scalar:
         """
         assert self.is_leaf(), "Only leaf variables can have derivatives."
         if self.derivative is None:
-            self.derivative = 0.0
-        self.derivative += x
+            self.__setattr__("derivative", 0.0)
+        self.__setattr__("derivative", self.derivative + x)
 
     def is_leaf(self) -> bool:
         """True if this variable created by the user (no `last_fn`)"""

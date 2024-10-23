@@ -72,8 +72,8 @@ class Linear(minitorch.Module):
         # view()
         # batch, hidden
         broadcast_input = inputs.view(*inputs.shape, 1)
-        out = self.weights.value.backend.mul_zip(broadcast_input, self.weights.value)
-        out = self.weights.value.backend.add_reduce(out, 1)
+        out = broadcast_input * self.weights.value
+        out = out.sum(1)
         out = out.view(out.shape[0], out.shape[2])
 
         out = out + self.bias.value

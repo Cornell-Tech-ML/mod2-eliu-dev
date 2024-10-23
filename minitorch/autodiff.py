@@ -41,7 +41,7 @@ class Variable(Protocol):
 
     def accumulate_derivative(self, x: Any) -> None:
         """Accumulate the derivative of the variable"""
-        pass
+        ...
 
     @property
     def unique_id(self) -> int:
