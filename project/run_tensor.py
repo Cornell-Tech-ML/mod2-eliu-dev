@@ -12,6 +12,72 @@ def RParam(*shape):
     return minitorch.Parameter(r)
 
 # TODO: Implement for Task 2.5.
+class Network(minitorch.Module):
+    def __init__(self, hidden_layers):
+        super().__init__()
+        self.hidden_layers = hidden_layers
+        self.layer1 = Linear(2, hidden_layers)
+        self.layer2 = Linear(hidden_layers, hidden_layers)
+        self.layer3 = Linear(hidden_layers, 1)
+
+    def forward(self, x) -> minitorch.Scalar:
+        """
+        Forward pass for the network
+
+        Args:
+        -----
+            x: Tuple of tensors
+
+        Returns:
+        -------
+            Tensor of forward pass shape
+        """
+        middle = self.layer1.forward(x).relu()
+        end = self.layer2.forward(middle).relu()
+        out = self.layer3.forward(end).sigmoid()
+
+        return out
+
+
+class Linear(minitorch.Module):
+    def __init__(self, in_size, out_size):
+        super().__init__()
+        self.weights = RParam(in_size, out_size)
+        self.bias = RParam(out_size)
+        self.in_size = in_size
+        self.out_size = out_size
+
+    def forward(self, inputs):
+        """Forward pass for the linear layer
+
+        Args:
+        -----
+            inputs: Tensor of inputs
+
+        Returns:
+        -------
+            Tensor output
+        """
+
+        # x - (batch, features, 1)
+        # * weights - (features, hidden)
+        #-------------
+        # (batch, features, hidden)
+        # reduce(features)
+        #-------------
+        # batch, 1, hidden
+        # + bias(hidden)
+        #-------------
+        # batch, 1, hidden
+        # view()
+        # batch, hidden
+        broadcast_input = inputs.view(*inputs.shape, 1)
+        out = broadcast_input * self.weights.value
+        out = out.sum(1)
+        out = out.view(out.shape[0], out.shape[2])
+
+        out = out + self.bias.value
+        return out
 
 def default_log_fn(epoch, total_loss, correct, losses):
     print("Epoch ", epoch, " loss ", total_loss, "correct", correct)
